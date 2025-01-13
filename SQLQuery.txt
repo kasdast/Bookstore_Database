@@ -1,0 +1,376 @@
+/*DROP*/
+
+/*
+drop table empmanagesbooks;
+drop table empmanagesorders;
+drop table empmanagescustomers;
+drop table order_item;
+drop table includes;
+drop table has;
+drop table writes;
+drop table review;
+drop table book;
+drop table promotion;
+drop table order_;
+drop table customer;
+drop table employee;
+drop table publisher;
+drop table author;
+
+*/
+
+/*CREATE*/
+
+CREATE TABLE author
+(
+	authorid     CHAR(7)         NOT NULL, 
+	first        VARCHAR(25)     NOT NULL,
+	last         VARCHAR(25)     NOT NULL, 
+	biography    VARCHAR(150)    NULL,
+	PRIMARY KEY(authorid)
+);
+
+CREATE TABLE publisher
+(
+	publisherid   CHAR(5)        NOT NULL,
+	name          VARCHAR(25)    NOT NULL,
+	street        VARCHAR(30)    NOT NULL,
+	zip           CHAR(10)       NOT NULL,
+	state         CHAR(5)        NOT NULL,
+	country       VARCHAR(15)    NOT NULL,
+	city          VARCHAR(15)    NOT NULL,
+	email         VARCHAR(50)    NOT NULL,
+	PRIMARY KEY (publisherid)
+);
+
+CREATE TABLE employee
+(
+	employeeid    CHAR(5)       NOT NULL,
+	first         VARCHAR(15)   NOT NULL,  
+	last          VARCHAR(25)   NOT NULL,
+	position      VARCHAR(30)   NOT NULL,
+	email         VARCHAR(35)   NOT NULL,
+	PRIMARY KEY (employeeid)
+);
+
+CREATE TABLE customer
+(
+	customerid    CHAR(5)       NOT NULL,
+	first         VARCHAR(15)   NOT NULL,  
+	last          VARCHAR(25)   NOT NULL,
+	street        VARCHAR(30)    NOT NULL,
+	zip           CHAR(10)       NOT NULL,
+	state         CHAR(5)        NOT NULL,
+	country       VARCHAR(15)    NOT NULL,
+	PRIMARY KEY (customerid)
+);
+
+CREATE TABLE order_
+(
+	orderid        CHAR(5)      NOT NULL,  
+	total          FLOAT        NOT NULL,  
+	odate          DATE         NOT NULL,  
+	status         VARCHAR(10)  NOT NULL,
+	shippingcost   FLOAT        NOT NULL,
+	PRIMARY KEY (orderid)
+);
+
+CREATE TABLE promotion
+(
+	promotioncode                 CHAR(5)        NOT NULL,
+	name                          VARCHAR(10)    NOT NULL,
+	startperiod                   DATE           NOT NULL,
+	endperiod                     DATE           NOT NULL,
+	discountamount                INT            NOT NULL,
+	PRIMARY KEY (promotioncode)  
+);
+
+CREATE TABLE book
+(
+	isbn            CHAR(5)        NOT NULL,
+	title           VARCHAR(25)    NOT NULL,
+	price           FLOAT          NOT NULL,
+	stockquantity   INT            NOT NULL, 
+	genre           VARCHAR(25)    NOT NULL,  
+	publisherid     CHAR(5)        NOT NULL,
+	PRIMARY KEY (isbn),
+	FOREIGN KEY (publisherid) REFERENCES publisher(publisherid)
+);
+
+CREATE TABLE review
+(
+	reviewid     CHAR(5)        NOT NULL, 
+	rating       INT            NOT NULL,  
+	text         VARCHAR(150)   NULL,
+	customerid    CHAR(5)       NOT NULL,
+	PRIMARY KEY (reviewid),
+	FOREIGN KEY (customerid) REFERENCES customer(customerid)
+);
+
+CREATE TABLE writes
+(
+   isbn            CHAR(5)        NOT NULL,
+   authorid        CHAR(7)        NOT NULL,
+   PRIMARY KEY (isbn, authorid),
+   FOREIGN KEY (isbn) REFERENCES book(isbn),
+   FOREIGN KEY (authorid) REFERENCES author(authorid)
+);
+
+CREATE TABLE has
+(
+   isbn            CHAR(5)        NOT NULL,
+   reviewid        CHAR(5)        NOT NULL,
+   PRIMARY KEY (isbn, reviewid),
+   FOREIGN KEY (isbn) REFERENCES book(isbn),
+   FOREIGN KEY (reviewid) REFERENCES review(reviewid)
+);
+
+CREATE TABLE includes
+(
+     orderid                CHAR(5)      NOT NULL,
+     promotioncode          CHAR(5)      NOT NULL,
+     PRIMARY KEY (orderid, promotioncode),
+     FOREIGN KEY (orderid) REFERENCES order_(orderid),
+     FOREIGN KEY (promotioncode) REFERENCES promotion(promotioncode)
+);
+
+CREATE TABLE order_item
+(
+     orderid         CHAR(5)      NOT NULL,
+     isbn            CHAR(5)      NOT NULL,
+     quantity        INT          NOT NULL,
+     PRIMARY KEY (orderid, isbn),
+     FOREIGN KEY (orderid) REFERENCES order_(orderid),
+     FOREIGN KEY (isbn)    REFERENCES book(isbn) 
+);
+
+create table EmpManagesCustomers
+(
+    employeeid      CHAR(5)      NOT NULL,
+    customerid      CHAR(5)      NOT NULL,
+    PRIMARY KEY (employeeid, customerid),
+    FOREIGN KEY (employeeid)    REFERENCES employee(employeeid),
+    FOREIGN KEY (customerid)    REFERENCES customer(customerid)
+);
+
+create table EmpManagesOrders
+(
+    employeeid      CHAR(5)      NOT NULL,
+    orderid         CHAR(5)      NOT NULL,
+    PRIMARY KEY (employeeid, orderid),
+    FOREIGN KEY (employeeid)    REFERENCES employee(employeeid),
+    FOREIGN KEY (orderid) REFERENCES order_(orderid)
+);
+
+create table EmpManagesBooks
+(
+    employeeid      CHAR(5)      NOT NULL,
+    isbn            CHAR(5)      NOT NULL,
+    PRIMARY KEY (employeeid, isbn),
+    FOREIGN KEY (employeeid)    REFERENCES employee(employeeid),
+    FOREIGN KEY (isbn)    REFERENCES book(isbn)
+);
+
+/*INSERT*/
+
+INSERT INTO author VALUES('A1', 'Harper', 'Lee', '***');
+INSERT INTO author VALUES('A3', 'George', 'Orwell', NULL);
+INSERT INTO author VALUES('A4', 'Jane', 'Austen', '***');
+INSERT INTO author VALUES('A5', 'Scott', 'Fitzgerald', NULL);
+INSERT INTO author VALUES('A2', 'Joanne', 'Rowling', NULL);
+INSERT INTO author VALUES('A6', 'Evelyn', 'Walsh', '***');
+INSERT INTO author VALUES('A7', 'Marco', 'Esposito', 'NULL');
+
+INSERT INTO publisher VALUES('P1', 'Penguin Random House', '1745', '10019', 'NY', 'United States', 'New York', 'penguing@gmail.com');
+INSERT INTO publisher VALUES('P2', 'HarperCollins Publishers', '195', '10007', 'NY', 'United States', 'New York', 'harpercollins@gmail.com');
+INSERT INTO publisher VALUES('P3', 'Simon & Schuster', '1230', '10020', 'NY', 'United States', 'New York', 'simonschuster@gmail.com');
+INSERT INTO publisher VALUES('P4', 'Green Books', '324', '10032', 'NY', 'United States', 'New York', 'greenbbb@gmail.com');
+INSERT INTO publisher VALUES('P5', 'Beyond Fantasy', '111', '10055', 'NY', 'United States', 'New York', 'beyondfantasy@gmail.com');
+INSERT INTO publisher VALUES('P6', 'Willow Creek Publishing', '123', '63119', 'MO', 'United States', 'St. Louis', 'wcreekpub@gmail.com');
+
+
+INSERT INTO employee VALUES ('E1', 'Sarah', 'Johnson', 'Store Manager', 'sjohnson@gmail.com');
+INSERT INTO employee VALUES ('E2', 'David', 'Lee', 'Assistant Manager', 'davidlee@gmail.com');
+INSERT INTO employee VALUES ('E3', 'Emily', 'Williams', 'Sales Associate', 'ewilliams@gmail.com');
+INSERT INTO employee VALUES ('E4', 'John', 'Smith', 'Accountant', 'jsmith@gmail.com');
+INSERT INTO employee VALUES ('E5', 'Theodore', 'Bagwell', 'Sales Assistant', 'tbag@gmail.com');
+INSERT INTO employee VALUES ('E6', 'Dastan', 'Kasymbekov', 'Intern', 'daskas@gmail.com');
+INSERT INTO employee VALUES ('E7', 'Olivia', 'Martinez', 'Intern', 'olivmartinez@gmail.com');
+
+
+INSERT INTO customer VALUES ('C1', 'Anya', 'Petrova', '1234', '72754', 'MO', 'United States');
+INSERT INTO customer VALUES ('C2', 'Kenji', 'Tanaka', '567', '63456', 'MI', 'United States');
+INSERT INTO customer VALUES ('C3', 'Maria', 'Gonzales', '32', '62765', 'IS', 'United States');
+INSERT INTO customer VALUES ('C4', 'Ryan', 'Smith', '88', '67354', 'MI', 'United States');
+INSERT INTO customer VALUES ('C5', 'Anna', 'Tomava', '23', '67115', 'MO', 'United States');
+
+INSERT INTO order_ VALUES ('O1', 49.78, '9/10/2024', 'Delivered', 5.99);
+INSERT INTO order_ VALUES ('O2', 39.5, '7/8/2024', 'Cancelled', 10.99);
+INSERT INTO order_ VALUES ('O3', 28.44, '6/7/2024', 'Delivered', 3.99);
+INSERT INTO order_ VALUES ('O4', 17.99, '09/17/2024', 'Delivered', 4.99);
+INSERT INTO order_ VALUES ('O5', 12.39, '08/17/2024', 'Delivered', 0);
+INSERT INTO order_ VALUES ('O6', 34.55, '08/17/2024', 'Delivered', 5.99);
+
+INSERT INTO promotion VALUES ('C12', 'Study', '07/10/2024', '07/10/2027', 10);
+INSERT INTO promotion VALUES ('C34', 'Geek', '08/08/2024', '08/09/2026', 15);
+INSERT INTO promotion VALUES ('C44', 'Leaf', '08/08/2024', '08/08/2027', 25);
+INSERT INTO promotion VALUES ('C55', 'HighFive', '08/08/2023', '08/08/2025', 55);
+INSERT INTO promotion VALUES ('C100', 'Super', '09/10/2022', '08/02/2025', 100);
+
+INSERT INTO book VALUES ('111', 'To Kill a Mocking Bird', 10.59, 23, 'Southern Gothic', 'P1');
+INSERT INTO book VALUES ('222', '1984', 7.99, 42, 'Dystopian fiction', 'P2');
+INSERT INTO book VALUES ('333', 'Pride & Prejudice', 13.99, 12, 'Regency romance', 'P2');
+INSERT INTO book VALUES ('444', 'The Great Gatsby', 24.69, 32, 'Jazz Age fiction', 'P1');
+INSERT INTO book VALUES ('555', 'Harry Potter', 12.59, 18, 'Fantasy', 'P1');
+INSERT INTO book VALUES ('666', 'The Quantum Detective', 14.99, 20, 'Science Fiction', 'P5');
+INSERT INTO book VALUES ('777', 'A Taste of Tuscany', 23.55, 15, 'Culinary Fiction', 'P3');
+
+INSERT INTO review VALUES ('R1', 2, '***', 'C1');
+INSERT INTO review VALUES ('R2', 4, NULL, 'C2');
+INSERT INTO review VALUES ('R3', 5, '***', 'C2');
+INSERT INTO review VALUES ('R4', 1, '***', 'C5');
+INSERT INTO review VALUES ('R5', 3, NULL, 'C3');
+INSERT INTO review VALUES ('R6', 5, '***', 'C5');
+INSERT INTO review VALUES ('R7', 4, NULL, 'C3');
+
+INSERT INTO writes VALUES ('111', 'A1');
+INSERT INTO writes VALUES ('333', 'A3');
+INSERT INTO writes VALUES ('222', 'A3');
+INSERT INTO writes VALUES ('555', 'A2');
+INSERT INTO writes VALUES ('444', 'A5');
+INSERT INTO writes VALUES ('111', 'A2');
+INSERT INTO writes VALUES ('222', 'A5');
+INSERT INTO writes VALUES ('666', 'A6');
+INSERT INTO writes VALUES ('777', 'A7');
+INSERT INTO writes VALUES ('777', 'A1');
+
+INSERT INTO has VALUES ('111', 'R1');
+INSERT INTO has VALUES ('222', 'R1');
+INSERT INTO has VALUES ('444', 'R2');
+INSERT INTO has VALUES ('444', 'R1');
+INSERT INTO has VALUES ('222', 'R4');
+INSERT INTO has VALUES ('555', 'R5');
+INSERT INTO has VALUES ('111', 'R6');
+INSERT INTO has VALUES ('666', 'R7');
+
+INSERT INTO includes VALUES ('O2', 'C12');
+INSERT INTO includes VALUES ('O3', 'C34');
+INSERT INTO includes VALUES ('O5', 'C44');
+
+INSERT INTO order_item VALUES ('O1', '111', 2);
+INSERT INTO order_item VALUES ('O2', '333', 3);
+INSERT INTO order_item VALUES ('O3', '444', 4);
+INSERT INTO order_item VALUES ('O4', '111', 1);
+INSERT INTO order_item VALUES ('O5', '222', 5);
+INSERT INTO order_item VALUES ('O1', '222', 3);
+INSERT INTO order_item VALUES ('O3', '333', 2);
+INSERT INTO order_item VALUES ('O6', '666', 3);
+INSERT INTO order_item VALUES ('O4', '333', 2);
+INSERT INTO order_item VALUES ('O6', '777', 1);
+INSERT INTO order_item VALUES ('O5', '333', 3);
+INSERT INTO order_item VALUES ('O6', '222', 5);
+
+insert into empmanagescustomers values ('E1', 'C1');
+insert into empmanagescustomers values ('E2', 'C2');
+insert into empmanagescustomers values ('E3', 'C3');
+insert into empmanagescustomers values ('E4', 'C4');
+insert into empmanagescustomers values ('E5', 'C5');
+insert into empmanagescustomers values ('E6', 'C5');
+insert into empmanagescustomers values ('E7', 'C3');
+insert into empmanagescustomers values ('E1', 'C2');
+insert into empmanagescustomers values ('E2', 'C1');
+
+insert into empmanagesbooks values ('E1', '111');
+insert into empmanagesbooks values ('E2', '222');
+insert into empmanagesbooks values ('E3', '333');
+insert into empmanagesbooks values ('E4', '444');
+insert into empmanagesbooks values ('E5', '555');
+insert into empmanagesbooks values ('E6', '666');
+insert into empmanagesbooks values ('E7', '777');
+insert into empmanagesbooks values ('E1', '777');
+insert into empmanagesbooks values ('E2', '111');
+
+insert into empmanagesorders values ('E1', 'O1');
+insert into empmanagesorders values ('E2', 'O2');
+insert into empmanagesorders values ('E3', 'O3');
+insert into empmanagesorders values ('E4', 'O4');
+insert into empmanagesorders values ('E5', 'O5');
+insert into empmanagesorders values ('E6', 'O6');
+insert into empmanagesorders values ('E7', 'O1');
+insert into empmanagesorders values ('E1', 'O2');
+insert into empmanagesorders values ('E2', 'O3');
+
+/*UPDATE*/
+
+update book set price = price * 1.05;
+
+update book set price = price /1.03 where price > (select avg(price) from book);
+
+update publisher set email = 'hcollins@gmail.com' where publisherid = 'P2';
+
+update publisher set name = 'Fantasy Books' where publisherid = 'P5';
+
+update book set stockQuantity = 0 where title = 'To Kill a Mocking Bird';
+
+update author set biography = NULL where authorid not in (select authorid from writes);
+
+update order_ set shippingcost = 0 where orderid in(select orderid from order_item where isbn = '111');
+
+update order_ set status = 'Cancelled' where orderid = 'O3';
+
+update includes set promotioncode = 'C55'
+where orderid in (select orderid from order_ where(total + shippingcost) > 25.00);
+
+update review set rating = 5 where customerid = (select customerid from customer where first = 'Maria') and reviewid = (select reviewid from has where isbn = (select isbn from book where title = 'Harry Potter'));
+
+update promotion set discountamount = discountamount * 0.85 where discountamount > 40;
+
+update customer set street = '240', zip = '63119', state = 'MO' where customerid = 'C3';
+
+update publisher set city = 'Las Vegas' where publisherid in (select publisherid from book group by publisherid having count(*) > 2);
+
+update order_item set quantity = 2 where orderid = 'O6' and isbn = (select isbn from book where title = 'A Taste of Tuscany');
+
+update employee set position = 'Assistant Manager' where employeeid in (select employeeid from empmanagescustomers group by employeeid having count(*) > 2);
+
+update promotion set name = 'ReadinWorm' where promotioncode = 'C100';
+
+update customer set street = '123', zip = '72884', state = 'OA', country = 'Japan' where first = 'Kenji' and last = 'Tanaka';
+
+update author set first = 'Armond' where authorid = (select authorid from writes where isbn = (select isbn from book where title = 'The Great Gatsby'));
+
+update employee set first = 'Arsen' where employeeid = 'E6';
+
+/*
+
+DELETE
+
+Side Note: In order for some objects to be deleted, they need to be also deleted in other tables due to reference constraints.
+
+*/    
+
+delete from empmanagescustomers
+where customerid = 'C5';
+
+delete from order_item where orderid = 'O4';
+delete from empmanagesorders where orderid = 'O4';
+delete from order_ where odate > '9/16/2024';    
+
+delete from order_item where isbn = '222';
+delete from empmanagesbooks where isbn = '222';
+delete from has where isbn = '222';
+delete from writes where isbn = '222';
+delete from book where price < 10.00;              
+
+delete from order_item where orderid  = 'O1';
+
+delete from author where authorid not in (select authorid from writes);
+
+
+
+
+
+
+
+
+
